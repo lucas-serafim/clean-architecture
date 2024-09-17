@@ -1,36 +1,38 @@
 import express, { Request, Response } from "express";
 import CreateCustomerUseCase from "../../../usecase/customer/create/create.customer.usecase";
-import ListCustomerUseCase from "../../../usecase/customer/list/list.customer.usecase";
 import CustomerRepository from "../../customer/repository/sequelize/customer.repository";
-import CustomerPresenter from "../presenters/customer.presenter";
+import ListCustomerUseCase from "../../../usecase/customer/list/list.customer.usecase";
 
 export const customerRoute = express.Router();
 
-customerRoute.post("/", async (req: Request, res: Response) => {
-  const usecase = new CreateCustomerUseCase(new CustomerRepository());
-  try {
-    const customerDto = {
-      name: req.body.name,
-      address: {
-        street: req.body.address.street,
-        city: req.body.address.city,
-        number: req.body.address.number,
-        zip: req.body.address.zip,
-      },
-    };
-    const output = await usecase.execute(customerDto);
-    res.send(output);
-  } catch (err) {
-    res.status(500).send(err);
-  }
+customerRoute.post("/", async (request: Request, response: Response) => {
+    const usecase = new CreateCustomerUseCase(new CustomerRepository());
+
+    try {
+        const customerDto = {
+            name: request.body.name,
+            address: {
+                street: request.body.address.street,
+                city: request.body.address.city,
+                number: request.body.address.number,
+                zip: request.body.address.zip
+            }
+        };
+
+        const output = await usecase.execute(customerDto);
+        response.send(output);
+    } catch (error) {
+        response.status(500).send(error);
+    }
 });
 
-customerRoute.get("/", async (req: Request, res: Response) => {
-  const usecase = new ListCustomerUseCase(new CustomerRepository());
-  const output = await usecase.execute({});
+customerRoute.get("/", async (request: Request, response: Response) => {
+    const usecase = new ListCustomerUseCase(new CustomerRepository());
 
-  res.format({
-    json: async () => res.send(output),
-    xml: async () => res.send(CustomerPresenter.listXML(output)),
-  });
+    try {
+        const output = await usecase.execute({});
+        response.send(output);
+    } catch (error) {
+        response.status(500).send(error);
+    }
 });

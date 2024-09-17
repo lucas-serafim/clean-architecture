@@ -35,7 +35,7 @@ describe("Unit test find customer use case", () => {
                 street: "Street",
                 city: "city",
                 number: 123,
-                zip: "Zip"
+                zip: "zip"
             }
         }
 
@@ -45,7 +45,6 @@ describe("Unit test find customer use case", () => {
     });
 
     it("should not find a customer", async () => {
-
         const customerRepository = MockRepository();
         customerRepository.find.mockImplementation(() => {
             throw new Error("Customer not found");
